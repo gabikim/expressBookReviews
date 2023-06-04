@@ -40,12 +40,17 @@ public_users.get('/', function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
   let fetchData = new Promise((resolve, reject) => {
     const isbn = req.params.isbn;
-    resolve(books[isbn])
+    const book = books[isbn];
+    if (book) {
+      resolve(books[isbn]);
+    } else {
+      reject(new Error("Could not find book."))
+    }
   })
   fetchData.then((data) => {
     res.send(data);
   }).catch((error) => {
-    res.status(500).send("Error occurred fetching data.");
+    res.status(404).send(error.message);
   })
 });
 
@@ -55,20 +60,16 @@ public_users.get('/author/:author', function (req, res) {
     const author = req.params.author;
     for (const key in books) {
       if (books[key].author.toLowerCase() === author.toLowerCase()) {
-        resolve(books[key]);
+        return resolve(books[key]);
       }
     }
-    resolve(null);
+    reject(new Error("Could not find book."));
   })
 
   fetchData.then((data) => {
-    if (data === null) {
-      res.status(404).send("Unable to find book!")
-    } else {
-      res.send(data)
-    }
+    res.send(data);
   }).catch((error) => {
-    res.status(500).send("Error occurred fetching data.")
+    res.status(404).send(error.message);
   })
 });
 
@@ -78,19 +79,15 @@ public_users.get('/title/:title', function (req, res) {
     const title = req.params.title;
     for (const key in books) {
       if (books[key].title.toLowerCase() === title.toLowerCase()) {
-        resolve(books[key]);
+        return resolve(books[key]);
       }
     }
-    resolve(null);
+    reject(new Error("Could not find book."));
   })
   fetchData.then((data) => {
-    if (data === null) {
-      res.status(404).send("Unable to find book!");
-    } else {
-      res.send(data);
-    }
+    res.send(data);
   }).catch((error) => {
-    res.status(500).send("Error occurred fetching data.")
+    res.status(404).send(error.message)
   })
 });
 
