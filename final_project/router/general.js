@@ -57,13 +57,13 @@ public_users.get('/isbn/:isbn', function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
   let fetchData = new Promise((resolve, reject) => {
-    const author = req.params.author;
-    for (const key in books) {
-      if (books[key].author.toLowerCase() === author.toLowerCase()) {
-        return resolve(books[key]);
-      }
+    const author = req.params.author.toLowerCase();
+    const filteredBooks = Object.values(books).filter(book => book.author.toLowerCase() === author);
+    if (filteredBooks.length > 0) {
+      resolve(filteredBooks);
+    } else {
+      reject(new Error("Could not find book."));
     }
-    reject(new Error("Could not find book."));
   })
 
   fetchData.then((data) => {
@@ -77,12 +77,12 @@ public_users.get('/author/:author', function (req, res) {
 public_users.get('/title/:title', function (req, res) {
   let fetchData = new Promise((resolve, reject) => {
     const title = req.params.title;
-    for (const key in books) {
-      if (books[key].title.toLowerCase() === title.toLowerCase()) {
-        return resolve(books[key]);
-      }
+    const filteredBooks = Object.values(books).filter(book => book.title.toLowerCase() === title);
+    if (filteredBooks.length > 0) {
+      resolve(filteredBooks);
+    } else {
+      reject(new Error("Could not find book."));
     }
-    reject(new Error("Could not find book."));
   })
   fetchData.then((data) => {
     res.send(data);
